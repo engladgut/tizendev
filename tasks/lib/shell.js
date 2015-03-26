@@ -14,6 +14,10 @@ module.exports = function(grunt) {
     return path.join(grunt.config("tizendev").binPath, cmd);
   }
 
+  function getSdb() {
+    return path.join(grunt.config("tizendev").sdbPath, '/sdb');
+  }
+
   var shell = {
     exec: function(cmd, args, opts) {
       var deferred = Q.defer();
@@ -44,12 +48,12 @@ module.exports = function(grunt) {
     },
 
     execSdbShell: function(cmd) {
-      return this.exec("sdb", ["shell", cmd])
+      return this.exec(getSdb(), ["shell", cmd])
         .fail(grunt.fail.warn);
     },
 
     execSdb: function(args) {
-      return this.exec("sdb", args)
+      return this.exec(getSdb(), args)
         .fail(grunt.fail.warn);
     },
 
@@ -59,7 +63,7 @@ module.exports = function(grunt) {
 
     sdbDebug: function(appId) {
       return shell.exec(
-        "sdb",
+        getSdb(),
         ["shell", "wrt-launcher", "-d -s", appId]
       );
     },
@@ -128,7 +132,7 @@ module.exports = function(grunt) {
 
     isWidgetStopped: function(appId) {
       return shell.exec(
-        "sdb",
+        getSdb(),
         ["shell", "wrt-launcher", "-r", appId]
       )
       .fail(grunt.fail.warn)
@@ -165,12 +169,14 @@ module.exports = function(grunt) {
 
     uninstallWidget: function(appId) {
       return shell.exec(
-        "sdb",
+        getSdb(),
         ["shell", "wrt-installer", "-un", appId]
       );
     },
 
     spawn: function(args, done) {
+      if( arg === 'sdb' ) arg = getSdb();
+
       return grunt.util.spawn(args, function(error, result, code) {
         done(error, result.stdout + (result.stderr.length > 0 ? "\n" + result.stderr : ""));
       });
@@ -190,14 +196,14 @@ module.exports = function(grunt) {
 
     clearDlog: function() {
       return shell.exec(
-        "sdb",
+        getSdb(),
         ["dlog", "-c"]
       );
     },
 
     getDlogProcess: function() {
       return shell.spawn({
-        cmd: "sdb",
+        cmd: getSdb(),
         args: ["dlog", "-v", "time", "EFL", "ConsoleMessage", "WRT", "WEBKIT", "AUL"]
       }, function(error, output) {
       });
@@ -205,14 +211,14 @@ module.exports = function(grunt) {
 
     getPlatformLevelLogging: function() {
       return shell.exec(
-        "sdb",
+        getSdb(),
         ["shell", "dlogctrl", "get",  "platformlog"]
       );  
     },
 
     setPlatformLevelLogging: function(enable) {
       return shell.exec(
-        "sdb",
+        getSdb(),
         ["shell", "dlogctrl", "set",  "platformlog", enable ? "1" : "0"]
       );  
     },
