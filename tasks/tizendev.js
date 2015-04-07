@@ -18,6 +18,7 @@ module.exports = function(grunt) {
     copyExclude: [], // This is appended to copy - useful for excluding files in project's gruntfile
     tasks: {}, // tasks to run after file change. for example: tasks: { "uglify": ["js/*.js", "otherfolder/**/*.js"] }
     sdkPath: "~/tizen-sdk",
+    sdbPath: "<%=tizendev.sdkPath%>",
     binPath: "<%=tizendev.sdkPath%>/tools/ide/bin/", // location of CLI tools
     nativeTarget: "armel", //specify an architecture ("armel" | "i386")
     profile: "", // the name of the profile used for signing. If empty, profile name is parsed from profiles.xml
@@ -44,6 +45,7 @@ module.exports = function(grunt) {
 
       config = _.extend(defaultConfig, grunt.config.get("tizendev"), cmdLineConfig);
       config.sdkPath = replaceHomeDir(config.sdkPath);
+      config.sdbPath = replaceHomeDir(config.sdbPath);
       config.binPath = replaceHomeDir(config.binPath);
       config.profilePath = replaceHomeDir(config.profilePath);
       config.sourceDir = replaceHomeDir(config.sourceDir);
