@@ -41,6 +41,8 @@ module.exports = function(grunt) {
     },
 
     startDaemon: function(cmd, args) {
+      if( cmd === 'sdb' ) cmd = getSdb();
+
       var deferred = Q.defer();
       var proc = spawn(cmd, args, { stdio: ['ignore', 1, 2]});
       proc.on('close', deferred.resolve);
@@ -175,7 +177,7 @@ module.exports = function(grunt) {
     },
 
     spawn: function(args, done) {
-      if( arg === 'sdb' ) arg = getSdb();
+      if( args.cmd === 'sdb' ) args.cmd = getSdb();
 
       return grunt.util.spawn(args, function(error, result, code) {
         done(error, result.stdout + (result.stderr.length > 0 ? "\n" + result.stderr : ""));
